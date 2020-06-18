@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Exampl
               holder.done.setVisibility(View.INVISIBLE);
               holder.delete.setVisibility(View.VISIBLE);
               holder.undo.setVisibility(View.VISIBLE);
+              holder.title.setPaintFlags(holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
               ContentValues cv = new ContentValues();
               String q="UPDATE "+TodoContract.TaskEntry.TABLE+" SET done = "+"'"+1+"' "+ "WHERE title = "+"'"+titleTask+"'";
               db.execSQL(q);
@@ -79,6 +81,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Exampl
                     holder.done.setVisibility(View.VISIBLE);
                     holder.delete.setVisibility(View.INVISIBLE);
                     holder.undo.setVisibility(View.INVISIBLE);
+                    holder.title.setPaintFlags(0);
 
                     ContentValues cv = new ContentValues();
                     cv.put(TodoContract.TaskEntry.DONE,"0");
@@ -95,15 +98,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Exampl
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    holder.done.setVisibility(View.VISIBLE);
+                    holder.delete.setVisibility(View.INVISIBLE);
+                    holder.undo.setVisibility(View.INVISIBLE);
+                    holder.title.setPaintFlags(0);
 
                     mExampleList.remove(position);
                     db.delete(TodoContract.TaskEntry.TABLE,"title=? ",new String[]{titleTask});
                     current.status="0";
                     notifyDataSetChanged();
 
-                    holder.done.setVisibility(View.VISIBLE);
-                    holder.delete.setVisibility(View.INVISIBLE);
-                    holder.undo.setVisibility(View.INVISIBLE);
                     Toast.makeText(mContext,"Deleted!!",Toast.LENGTH_SHORT).show();
                 }
             });
